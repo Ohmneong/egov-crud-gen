@@ -2,6 +2,11 @@
 
 eGov 표준프레임워크(5.0.1) CRUD 풀세트 코드 생성기. **외부 의존성 0, 순수 Java(텍스트 블록 템플릿)** 로 작성되어 번들 JDK만으로 빌드·실행된다. 폐쇄망에 그대로 복사해 쓸 수 있다.
 
+## 📖 문서 안내
+- **[QUICKSTART.md](./QUICKSTART.md)** — 처음 쓰는 분용. 복붙 따라하기 (DDL 작성 → 실행 → 결과)
+- **[USER-GUIDE.md](./USER-GUIDE.md)** — 사용자 매뉴얼. 옵션·설정·경로 규칙·트러블슈팅
+- **[MAINTAINER-GUIDE.md](./MAINTAINER-GUIDE.md)** — 관리자용. 도구 수정·확장·배포·버전관리
+
 ## 빌드
 
 ```powershell

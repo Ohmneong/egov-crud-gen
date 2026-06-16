@@ -1,5 +1,7 @@
 # egov-crud-gen 사용자 매뉴얼
 
+> 💡 **처음 쓰신다면 [QUICKSTART.md](./QUICKSTART.md)** (복붙 따라하기)부터 보세요. 이 문서는 옵션·규칙을 더 자세히 설명합니다.
+
 eGov 표준프레임워크(검증: 5.0.1) 프로젝트에서 **MySQL DDL 한 개 → CRUD 풀세트(백엔드 6 + Mapper XML + JSP 4)** 를 생성하는 CLI 도구입니다. 외부 의존성 0(순수 Java), 폐쇄망에서 그대로 동작합니다.
 
 ---
