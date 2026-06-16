@@ -26,9 +26,11 @@ eGov 표준프레임워크(검증: 5.0.1) 프로젝트에서 **MySQL DDL 한 개
 
 ```powershell
 cd egov-crud-gen
-powershell -ExecutionPolicy Bypass -File build.ps1
+powershell -ExecutionPolicy Bypass -File .\build.ps1
 # → dist\egov-crud-gen.jar 생성
 ```
+
+> **주의**: 위 명령은 `powershell`까지 통째로 입력해야 합니다. 이미 PowerShell 창 안이라면 `.\build.ps1` 만으로도 됩니다. `powershell`을 빼고 `-ExecutionPolicy ...`만 입력하면 `'-ExecutionPolicy' 용어가 인식되지 않습니다` 에러가 납니다. (실행 정책 때문에 `.\build.ps1`이 막히면 `powershell -ExecutionPolicy Bypass -File .\build.ps1`을 쓰세요.)
 
 `build.ps1`이 번들 JDK의 `javac`/`jar`를 자동 탐색합니다. 다른 JDK 경로를 쓰려면 `build.ps1`의 `$jdkRoot`만 수정하세요.
 
