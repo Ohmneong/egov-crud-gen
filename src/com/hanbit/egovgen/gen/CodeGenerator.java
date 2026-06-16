@@ -490,24 +490,45 @@ public class CodeGenerator {
     // ─────────────────────────────── Mapper XML ───────────────────────────────
     private String mapperXml(TableMeta t) {
         boolean logical = t.getColumns().stream().anyMatch(c -> "useAt".equals(c.getFieldName()));
-        StringBuilder resultMap = new StringBuilder();
-        StringBuilder insCols = new StringBuilder();
-        StringBuilder insVals = new StringBuilder();
-        StringBuilder updSet = new StringBuilder();
         ColumnMeta pk = t.primaryKey();
         List<ColumnMeta> cols = t.getColumns();
-        for (int i = 0; i < cols.size(); i++) {
-            ColumnMeta c = cols.get(i);
+
+        // resultMap: 모든 컬럼(조회는 감사 컬럼도 보여줌)
+        StringBuilder resultMap = new StringBuilder();
+        for (ColumnMeta c : cols) {
             resultMap.append("        <result property=\"").append(c.getFieldName())
                      .append("\" column=\"").append(c.getColumnName()).append("\"/>\n");
-            insCols.append("            ").append(c.getColumnName()).append(i < cols.size() - 1 ? ",\n" : "\n");
-            insVals.append("            #{").append(c.getFieldName()).append("}").append(i < cols.size() - 1 ? ",\n" : "\n");
-            if (pk == null || !c.isPrimaryKey()) {
-                updSet.append("            ").append(c.getColumnName()).append(" = #{")
-                      .append(c.getFieldName()).append("},\n");
-            }
         }
-        // 마지막 update set 콤마 제거
+
+        // INSERT 대상: 감사 ID(등록자/수정자)는 제외, 감사 시점은 SYSDATE()
+        List<ColumnMeta> insertCols = new java.util.ArrayList<>();
+        for (ColumnMeta c : cols) {
+            if (c.isAudit() && !c.isAuditTimestamp()) continue;
+            insertCols.add(c);
+        }
+        StringBuilder insCols = new StringBuilder();
+        StringBuilder insVals = new StringBuilder();
+        for (int i = 0; i < insertCols.size(); i++) {
+            ColumnMeta c = insertCols.get(i);
+            boolean last = (i == insertCols.size() - 1);
+            insCols.append("            ").append(c.getColumnName()).append(last ? "\n" : ",\n");
+            String val = c.isAuditTimestamp() ? "SYSDATE()" : "#{" + c.getFieldName() + "}";
+            insVals.append("            ").append(val).append(last ? "\n" : ",\n");
+        }
+
+        // UPDATE SET: PK 제외, 최초등록/수정자 감사 제외, 최종수정시점은 SYSDATE()
+        StringBuilder updSet = new StringBuilder();
+        for (ColumnMeta c : cols) {
+            if (c.isPrimaryKey()) continue;
+            if (c.isAudit()) {
+                if (c.getColumnName().equalsIgnoreCase("LAST_UPDT_PNTTM")) {
+                    updSet.append("            LAST_UPDT_PNTTM = SYSDATE(),\n");
+                }
+                continue; // 그 외 감사 컬럼은 수정에서 제외
+            }
+            updSet.append("            ").append(c.getColumnName()).append(" = #{")
+                  .append(c.getFieldName()).append("},\n");
+        }
         String updSetStr = updSet.toString();
         int lastComma = updSetStr.lastIndexOf(',');
         if (lastComma >= 0) updSetStr = updSetStr.substring(0, lastComma) + updSetStr.substring(lastComma + 1);
@@ -677,6 +698,8 @@ public class CodeGenerator {
         for (ColumnMeta c : t.getColumns()) {
             // 등록 화면에서 채번 대상 PK는 입력란 생략(서버에서 자동 채번)
             if (c.isPrimaryKey() && !modify && idgnr) continue;
+            // 감사 컬럼(등록자/등록시점/수정자/수정시점)은 시스템이 채우므로 화면 입력 제외
+            if (c.isAudit()) continue;
             String valExpr = "<c:out value=\"${" + decap(t.getEntityName()) + "." + c.getFieldName() + "}\"/>";
             rows.append("        <tr><th>").append(c.label()).append("</th><td>");
             if (c.isPrimaryKey() && modify) {
@@ -689,6 +712,8 @@ public class CodeGenerator {
                 String maxlen = c.getSize() > 0 ? " maxlength=\"" + c.getSize() + "\"" : "";
                 rows.append("<input type=\"text\" name=\"").append(c.getFieldName())
                     .append("\"").append(maxlen).append(" value=\"").append(modify ? valExpr : "").append("\"/>");
+                // 입력칸 옆에 데이터 타입·길이 안내
+                rows.append(" <span style=\"color:#888;font-size:0.85em\">").append(c.getJdbcType()).append("</span>");
             }
             rows.append("</td></tr>\n");
         }

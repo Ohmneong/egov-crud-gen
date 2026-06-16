@@ -126,7 +126,7 @@ powershell -ExecutionPolicy Bypass -File .\build.ps1
 | 추후 | 화면 플랫폼(eXBuilder/WebSquare) | 화면 생성을 `ViewGenerator` 인터페이스로 분리 후 구현 추가 |
 | 추후 | AI 보조 | 사내 폐쇄망 LLM(CLI) 연동, 컬럼 코멘트→라벨/검색조건 추론. `LlmAssist` 인터페이스 |
 | 개선 | 검색 select 라벨 채우기 | 목록 화면 검색 select 옵션이 비어 있음 |
-| 개선 | 시각/등록자 컬럼 `SYSDATE()` 자동 | 현재 일반 컬럼과 동일 매핑 |
+| 개선 | 등록자/수정자 ID 서버 연동 | 감사 시점(_PNTTM)은 SYSDATE() 자동·감사컬럼 폼 제외 완료. 등록자/수정자 ID만 Controller의 LoginVO 연동 남음 |
 
 ## 10. 이어받는 사람 체크리스트 (처음 할 일)
 

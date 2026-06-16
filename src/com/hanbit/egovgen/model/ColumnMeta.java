@@ -48,4 +48,22 @@ public class ColumnMeta {
     public boolean searchable() {
         return "String".equals(javaType) && !primaryKey;
     }
+
+    /**
+     * eGov 표준 감사 컬럼 여부(등록자/등록시점/수정자/수정시점).
+     * 사용자가 화면에서 입력하는 값이 아니라 시스템이 채우는 컬럼이다.
+     */
+    public boolean isAudit() {
+        if (columnName == null) return false;
+        String c = columnName.toUpperCase();
+        return c.equals("FRST_REGISTER_ID") || c.equals("FRST_REGIST_PNTTM")
+            || c.equals("LAST_UPDUSR_ID") || c.equals("LAST_UPDT_PNTTM");
+    }
+
+    /** 감사 컬럼 중 시점(일시) 컬럼 — INSERT/UPDATE 시 SYSDATE()로 자동 입력. */
+    public boolean isAuditTimestamp() {
+        if (columnName == null) return false;
+        String c = columnName.toUpperCase();
+        return c.equals("FRST_REGIST_PNTTM") || c.equals("LAST_UPDT_PNTTM");
+    }
 }
