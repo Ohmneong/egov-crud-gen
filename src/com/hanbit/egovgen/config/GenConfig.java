@@ -8,17 +8,16 @@ import java.util.Properties;
 
 /**
  * 프로젝트 적응형 설정. 프로젝트마다 달라지는 항목을 외부 properties로 주입한다.
- * (차별점 B의 1차 버전 — 설정 항목을 의도적으로 소수로 제한)
  *
  * 지원 키:
- *   basePackage    : 생성 코드 루트 패키지 (예: egovframework.let.sym.cal)
- *   module         : URL/뷰/Mapper 경로 세그먼트 (예: sym/cal)
- *   tablePrefix    : 엔티티명 도출 시 제거할 테이블 prefix (예: LETTN)
- *   dbType         : 대상 DB (1차 mysql 고정)
+ *   basePackage    : 생성 코드 루트 패키지
+ *   module         : URL/뷰/Mapper 경로 세그먼트 (let/ 으로 시작 권장)
+ *   tablePrefix    : 엔티티명 도출 시 제거할 테이블 prefix
+ *   dbType         : 대상 DB (1차 mysql)
  *   outputDir      : 산출물 출력 루트 (기본 ./output)
- *   daoBase        : DAO 베이스 클래스 FQCN
- *   serviceBase    : ServiceImpl 베이스 클래스 FQCN
- *   paginationInfo : PaginationInfo FQCN
+ *   useIdgnr       : 채번 적용 여부 (true면 String PK 필요)
+ *   baseUrl        : 생성 후 안내 URL의 기본 주소 (기본 http://localhost:8080)
+ *   daoBase/serviceBase/paginationInfo : 공통 컴포넌트 베이스 FQCN
  */
 public class GenConfig {
 
@@ -27,9 +26,9 @@ public class GenConfig {
     private String tablePrefix = "";
     private String dbType = "mysql";
     private String outputDir = "./output";
-    private boolean useIdgnr = false;   // 채번(EgovIdGnrService) 적용 여부
+    private boolean useIdgnr = false;
+    private String baseUrl = "http://localhost:8080";
 
-    // 공통 컴포넌트 베이스 경로 (eGov 5.0.1 검증값을 기본값으로)
     private String daoBase = "org.egovframe.rte.psl.dataaccess.EgovAbstractMapper";
     private String serviceBase = "org.egovframe.rte.fdl.cmmn.EgovAbstractServiceImpl";
     private String paginationInfo = "org.egovframe.rte.ptl.mvc.tags.ui.pagination.PaginationInfo";
@@ -47,6 +46,7 @@ public class GenConfig {
         c.dbType = p.getProperty("dbType", c.dbType);
         c.outputDir = p.getProperty("outputDir", c.outputDir);
         c.useIdgnr = Boolean.parseBoolean(p.getProperty("useIdgnr", String.valueOf(c.useIdgnr)));
+        c.baseUrl = p.getProperty("baseUrl", c.baseUrl);
         c.daoBase = p.getProperty("daoBase", c.daoBase);
         c.serviceBase = p.getProperty("serviceBase", c.serviceBase);
         c.paginationInfo = p.getProperty("paginationInfo", c.paginationInfo);
@@ -63,6 +63,7 @@ public class GenConfig {
             case "dbType" -> dbType = value;
             case "out" -> outputDir = value;
             case "idgnr" -> useIdgnr = Boolean.parseBoolean(value);
+            case "baseUrl" -> baseUrl = value;
             default -> { /* 무시 */ }
         }
     }
@@ -73,6 +74,7 @@ public class GenConfig {
     public String dbType() { return dbType; }
     public String outputDir() { return outputDir; }
     public boolean useIdgnr() { return useIdgnr; }
+    public String baseUrl() { return baseUrl; }
     public String daoBase() { return daoBase; }
     public String serviceBase() { return serviceBase; }
     public String paginationInfo() { return paginationInfo; }

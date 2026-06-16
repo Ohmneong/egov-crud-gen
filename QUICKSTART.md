@@ -75,6 +75,14 @@ PowerShell에서 (STEP 1의 그 창, 도구 폴더 안):
 
 `[생성 완료] 11개 파일 → ...` 이 보이면 성공이에요.
 
+그리고 **맨 끝에 접속 URL이 바로 출력**됩니다 — 톰캣 띄운 뒤 이 주소로 들어가면 화면이 떠요:
+```
+[접속 URL] 톰캣 기동 후 브라우저에서:
+  목록  http://localhost:8080/let/cop/notice/EgovNoticeList.do
+  등록  http://localhost:8080/let/cop/notice/EgovNoticeRegistView.do
+```
+> 주소 앞부분(포트/컨텍스트)은 `gen.properties`의 `baseUrl` 값으로 맞춰집니다. 내 톰캣에 맞게 바꿔두면 매번 정확한 주소가 나와요.
+
 ---
 
 ## STEP 5. 결과 확인

@@ -45,6 +45,7 @@ public class Main {
             cfg.override("out", opt.get("out"));
             cfg.override("dbType", opt.get("dbType"));
             cfg.override("idgnr", opt.get("idgnr"));
+            cfg.override("baseUrl", opt.get("baseUrl"));
 
             // DDL 읽기
             Path ddlFile = Path.of(opt.get("ddl"));
@@ -69,6 +70,15 @@ public class Main {
 
             System.out.println("[생성 완료] " + files.size() + "개 파일 → " + Path.of(cfg.outputDir()).toAbsolutePath());
             for (Path f : files) System.out.println("  - " + f);
+
+            // 접속 URL 안내 (톰캣 기동 후 바로 쓸 수 있게)
+            String base = cfg.baseUrl();
+            String mod = cfg.module();
+            String ent = table.getEntityName();
+            System.out.println();
+            System.out.println("[접속 URL] 톰캣 기동 후 브라우저에서 (포트/컨텍스트는 환경에 맞게):");
+            System.out.println("  목록  " + base + "/" + mod + "/Egov" + ent + "List.do");
+            System.out.println("  등록  " + base + "/" + mod + "/Egov" + ent + "RegistView.do");
 
         } catch (IllegalArgumentException e) {
             System.err.println("[입력 오류] " + e.getMessage());
